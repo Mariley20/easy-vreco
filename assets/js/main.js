@@ -151,4 +151,3 @@ const aplicacion = {
 function initMap() {
     aplicacion.inicio();
 }
-//$(document).ready(aplicacion.inicio);
