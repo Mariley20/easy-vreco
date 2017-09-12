@@ -2,7 +2,7 @@
 const aplicacion = {
     mapa: undefined,
     latitud: undefined,
-    longitud:undefined,
+    longitud: undefined,
     //lugarOrigen: undefined,
     //lugarDestino: undefined,
     inicio: () => {
@@ -18,12 +18,12 @@ const aplicacion = {
         });
 
         let lugarOrigen = document.getElementById('origen');
-        let autocompleteOrigen = new google.maps.places.Autocomplete(lugarOrigen);
-        autocompleteOrigen.bindTo('bounds', aplicacion.mapa);
+        let autocompletaOrigen = new google.maps.places.Autocomplete(lugarOrigen);
+        autocompletaOrigen.bindTo('bounds', aplicacion.mapa);
         let detalleUbicacionOrigen = new google.maps.InfoWindow();
-        let markerOrigen = aplicacion.crearMarcador(aplicacion.mapa);
+        let marcarOrigen = aplicacion.crearMarcador(aplicacion.mapa);
 
-        aplicacion.crearListener(autocompleteOrigen, detalleUbicacionOrigen, markerOrigen);
+        aplicacion.crearListener(autocompletaOrigen, detalleUbicacionOrigen, marcarOrigen);
 
         let lugarDestino = document.getElementById('destino');
         let autocompletaDestino = new google.maps.places.Autocomplete(lugarDestino);
@@ -36,21 +36,21 @@ const aplicacion = {
         /* Mi ubicación actual */
         $("#encuentrame").click(aplicacion.buscarMiUbicacion);
         /* Ruta */
-        let directionsService = new google.maps.DirectionsService;
-        let directionsDisplay = new google.maps.DirectionsRenderer;
+        let servicioDireccion = new google.maps.DirectionsService;
+        let visualizaDireccion = new google.maps.DirectionsRenderer;
 
         $("#ruta").on("click", () => {
-            aplicacion.dibujarRuta(directionsService, directionsDisplay);
+            aplicacion.dibujarRuta(servicioDireccion, visualizaDireccion);
         });
 
-        directionsDisplay.setMap(aplicacion.mapa);
+        visualizaDireccion.setMap(aplicacion.mapa);
     },
-    crearListener: (autocomplete, detalleUbicacion, marker) => {
+    crearListener: (autocomplete, detalleUbicacion, marcar) => {
         autocomplete.addListener('place_changed', () => {
             detalleUbicacion.close();
-            marker.setVisible(false);
-            let place = autocomplete.getPlace();
-            aplicacion.marcarUbicacion(place, detalleUbicacion, marker);
+            marcar.setVisible(false);
+            let lugar = autocomplete.getPlace();
+            aplicacion.marcarUbicacion(lugar, detalleUbicacion, marcar);
         });
     },
     buscarMiUbicacion: () => {
@@ -76,34 +76,34 @@ const aplicacion = {
         aplicacion.mapa.setZoom(17);
         aplicacion.mapa.setCenter(ubicacionActual.position);
     },
-    marcarUbicacion: (place, detalleUbicacion, marker) => {
-        if (!place.geometry) {
+    marcarUbicacion: (lugar, detalleUbicacion, marcar) => {
+        if (!lugar.geometry) {
             // Error si no encuentra el lugar indicado
-            window.alert("No encontramos el lugar que indicaste: '" + place.name + "'");
+            window.alert("No encontramos el lugar que indicaste: '" + lugar.name + "'");
             return;
         }
-        // If the place has a geometry, then present it on a aplicacion.map.
-        if (place.geometry.viewport) {
-            aplicacion.mapa.fitBounds(place.geometry.viewport);
+        // If the lugar has a geometry, then present it on a aplicacion.map.
+        if (lugar.geometry.viewport) {
+            aplicacion.mapa.fitBounds(lugar.geometry.viewport);
         } else {
-            aplicacion.mapa.setCenter(place.geometry.location);
+            aplicacion.mapa.setCenter(lugar.geometry.location);
             aplicacion.mapa.setZoom(17);
         }
 
-        marker.setPosition(place.geometry.location);
-        marker.setVisible(true);
+        marcar.setPosition(lugar.geometry.location);
+        marcar.setVisible(true);
 
         let address = '';
-        if (place.address_components) {
+        if (lugar.address_components) {
             address = [
-                (place.address_components[0] && place.address_components[0].short_name || ''),
-                (place.address_components[1] && place.address_components[1].short_name || ''),
-                (place.address_components[2] && place.address_components[2].short_name || '')
+                (lugar.address_components[0] && lugar.address_components[0].short_name || ''),
+                (lugar.address_components[1] && lugar.address_components[1].short_name || ''),
+                (lugar.address_components[2] && lugar.address_components[2].short_name || '')
             ].join(' ');
         }
 
-        detalleUbicacion.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-        detalleUbicacion.open(aplicacion.mapa, marker);
+        detalleUbicacion.setContent('<div><strong>' + lugar.name + '</strong><br>' + address);
+        detalleUbicacion.open(aplicacion.mapa, marcar);
     },
     crearMarcador: (map) => {
         let icono = {
@@ -114,14 +114,14 @@ const aplicacion = {
             scaledSize: new google.maps.Size(35, 35)
         };
 
-        let marker = new google.maps.Marker({
+        let marca = new google.maps.Marker({
             map: map,
             animation: google.maps.Animation.DROP,
             icon: icono,
             anchorPoint: new google.maps.Point(0, -29)
         });
 
-        return marker;
+        return marca;
     },
     dibujarRuta: (directionsService, directionsDisplay) => {
         let origin = $("#origen").val();
@@ -151,3 +151,4 @@ const aplicacion = {
 function initMap() {
     aplicacion.inicio();
 }
+//$(document).ready(aplicacion.inicio);
